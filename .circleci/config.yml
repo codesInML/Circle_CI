@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run:
           name: "Create workspace"
-          command: mkdir -p workspace
+          command: mkdir -p ~/workspace
       - run:
           name: "Save hello"
           command: echo "Hello World" > ~/workspace/output.txt
