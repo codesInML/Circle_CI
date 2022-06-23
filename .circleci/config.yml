@@ -16,25 +16,25 @@ jobs:
     executor: my-executor
     steps:
       - checkout
-      - run:
-          name: "Create workspace"
-          command: mkdir -p workspace
+      # - run:
+      #     name: "Create workspace"
+      #     command: mkdir -p workspace
       - run:
           name: "Save hello"
-          command: echo "Hello World" > workspace/output.txt
+          command: echo "Hello World" > output.txt
       - persist_to_workspace:
-          root: ./workspace
-          path: output.txt
+          root: .
+          path: .
   
   print_output_file:
     executor: my-executor
     steps:
       - checkout
       - attach_workspace:
-          at: ./workspace
+          at: .
       - run:
           name: "Print Output file"
-          command: cat ./workspace/output.txt
+          command: cat output.txt
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
