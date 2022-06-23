@@ -10,7 +10,9 @@ commands:
         type: string
         default: "1.0"
     steps:
-      - run: echo << parameters.to >>
+      - run:
+          name: "Print pipeline id"
+          command: echo << parameters.to >>
 
 executors:
   my-executor:
