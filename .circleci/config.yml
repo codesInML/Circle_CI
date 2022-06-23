@@ -8,7 +8,6 @@ executors:
   my-executor:
     docker:
       - image: cimg/base:stable
-    working_directory: /tmp
 
 jobs:
   save_hello_world_output:
