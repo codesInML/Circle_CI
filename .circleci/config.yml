@@ -18,7 +18,7 @@ jobs:
           name: "Save hello"
           command: echo "Hello World" > output.txt
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: .
           path: output.txt
   
   print_output_file:
@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp/workspace
+          at: .
       - run:
           name: "Print Output file"
           command: cat output.txt
