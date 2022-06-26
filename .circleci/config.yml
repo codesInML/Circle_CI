@@ -20,34 +20,62 @@ executors:
       - image: cimg/base:stable
 
 jobs:
-  save_hello_world_output:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    executor: my-executor
-    steps:
-      - checkout
-      - run:
-          name: "Create workspace"
-          command: mkdir -p ~/workspace
-      - run:
-          name: "Save hello"
-          command: echo "Hello World" > ~/workspace/output.txt
-      - persist_to_workspace:
-          root: ~/workspace
-          paths:
-            - output.txt
+  # save_hello_world_output:
+  #   executor: my-executor
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: "Create workspace"
+  #         command: mkdir -p ~/workspace
+  #     - run:
+  #         name: "Save hello"
+  #         command: echo "Hello World" > ~/workspace/output.txt
+  #     - persist_to_workspace:
+  #         root: ~/workspace
+  #         paths:
+  #           - output.txt
   
-  print_output_file:
+  # print_output_file:
+  #   executor: my-executor
+  #   steps:
+  #     - checkout
+  #     - attach_workspace:
+  #         at: ~/workspace
+  #     - print_pipeline_id:
+  #         to: $CIRCLE_WORKFLOW_ID
+  #     - run:
+  #         name: "Print Output file"
+  #         command: cat ~/workspace/output.txt
+  to_fail_job:
     executor: my-executor
     steps:
       - checkout
-      - attach_workspace:
-          at: ~/workspace
-      - print_pipeline_id:
-          to: $CIRCLE_WORKFLOW_ID
       - run:
-          name: "Print Output file"
-          command: cat ~/workspace/output.txt
+        name: "return 1"
+        command: return 1
+
+  on_fail_job:
+    executor: my-executor
+    steps:
+      - run:
+          name: Testing application
+          command: make test
+          shell: /bin/bash
+          working_directory: ~/my-app
+          no_output_timeout: 30m
+          environment:
+            FOO: bar
+
+      - run: echo 127.0.0.1 devhost | sudo tee -a /etc/hosts
+
+      - run: |
+          sudo -u root createuser -h localhost --superuser ubuntu &&
+          sudo createdb -h localhost test_db
+
+      - run:
+          name: Upload Failed Tests
+          command: curl --data fail_tests.log http://example.com/error_logs
+          when: on_fail
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
