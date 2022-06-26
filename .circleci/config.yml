@@ -47,34 +47,16 @@ jobs:
   #         name: "Print Output file"
   #         command: cat ~/workspace/output.txt
   to_fail_job:
-    executor: my-executor
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - run:
         name: "return 1"
         command: return 1
-
-  on_fail_job:
-    executor: my-executor
-    steps:
       - run:
-          name: Testing application
-          command: make test
-          shell: /bin/bash
-          working_directory: ~/my-app
-          no_output_timeout: 30m
-          environment:
-            FOO: bar
-
-      - run: echo 127.0.0.1 devhost | sudo tee -a /etc/hosts
-
-      - run: |
-          sudo -u root createuser -h localhost --superuser ubuntu &&
-          sudo createdb -h localhost test_db
-
-      - run:
-          name: Upload Failed Tests
-          command: curl --data fail_tests.log http://example.com/error_logs
+          name: Log error
+          command: echo "Hello Error"
           when: on_fail
 
 # Invoke jobs via workflows
@@ -82,7 +64,4 @@ jobs:
 workflows:
   say-hello-workflow:
     jobs:
-      - save_hello_world_output
-      - print_output_file:
-          requires:
-            - save_hello_world_output
+      - to_fail_job
